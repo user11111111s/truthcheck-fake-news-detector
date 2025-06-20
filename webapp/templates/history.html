@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article History - TruthCheck</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 TruthCheck</h1>
+            <p>Article History</p>
+        </header>
+
+        <nav>
+            <a href="/">Home</a>
+            <a href="/history" class="active">History</a>
+        </nav>
+
+        <main>
+            <div class="history-header">
+                <h2>📚 Analyzed Articles</h2>
+                <div class="search-box">
+                    <form action="/search" method="GET">
+                        <input type="text" name="q" placeholder="Search articles..." 
+                               value="{{ query if query else '' }}">
+                        <button type="submit">🔍</button>
+                    </form>
+                </div>
+            </div>
+
+            {% if query %}
+            <div class="search-results">
+                <p>Search results for: <strong>"{{ query }}"</strong></p>
+            </div>
+            {% endif %}
+
+            <div class="stats-summary">
+                <p>Total: {{ stats.total_articles }} articles from {{ stats.unique_sources }} sources</p>
+            </div>
+
+            {% if articles %}
+            <div class="articles-list">
+                {% for article in articles %}
+                <div class="article-summary">
+                    <div class="article-summary-header">
+                        <h3><a href="/article/{{ article.id }}">{{ article.title }}</a></h3>
+                        <span class="article-source">{{ article.source }}</span>
+                    </div>
+                    
+                    <div class="article-summary-meta">
+                        <span class="article-date">{{ article.scraped_at }}</span>
+                        <span class="article-words">{{ article.word_count }} words</span>
+                        <span class="article-images">{{ article.images|length }} images</span>
+                    </div>
+                    
+                    <p class="article-preview">
+                        {{ article.content[:200] }}{% if article.content|length > 200 %}...{% endif %}
+                    </p>
+                    
+                    <div class="article-actions">
+                        <a href="/article/{{ article.id }}" class="view-btn">View Full Analysis</a>
+                        <a href="{{ article.url }}" target="_blank" class="source-btn">Original Source</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-articles">
+                <h3>📭 No articles found</h3>
+                <p>Start by <a href="/">analyzing your first article</a>!</p>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

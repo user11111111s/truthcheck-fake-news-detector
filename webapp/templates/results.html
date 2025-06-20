@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Results - TruthCheck</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 TruthCheck</h1>
+            <p>Analysis Results</p>
+        </header>
+
+        <nav>
+            <a href="/">Home</a>
+            <a href="/history">History</a>
+        </nav>
+
+        <main>
+            <div class="article-header">
+                <button onclick="history.back()" class="back-btn">← Back</button>
+                <h2>📰 Article Analysis</h2>
+            </div>
+
+            <div class="article-card">
+                <div class="article-meta">
+                    <span class="source">{{ article.source }}</span>
+                    <span class="date">{{ article.publication_date }}</span>
+                    <span class="word-count">{{ article.word_count }} words</span>
+                </div>
+
+                <h3 class="article-title">{{ article.title }}</h3>
+                
+                {% if article.author != "Author not found" %}
+                <p class="article-author">By {{ article.author }}</p>
+                {% endif %}
+
+                <div class="article-url">
+                    <strong>Source URL:</strong> 
+                    <a href="{{ article.url }}" target="_blank">{{ article.url }}</a>
+                </div>
+
+                <div class="article-content">
+                    <h4>📄 Article Content:</h4>
+                    <div class="content-preview">
+                        {{ article.content[:1000] }}{% if article.content|length > 1000 %}...{% endif %}
+                    </div>
+                    {% if article.content|length > 1000 %}
+                    <button onclick="toggleFullContent()" id="toggleBtn">Show Full Content</button>
+                    <div id="fullContent" style="display: none;">
+                        {{ article.content }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if article.images %}
+                <div class="article-images">
+                    <h4>🖼️ Images Found ({{ article.images|length }}):</h4>
+                    <div class="image-grid">
+                        {% for image in article.images[:3] %}
+                        <img src="{{ image }}" alt="Article image" onclick="openImage('{{ image }}')">
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="analysis-placeholder">
+                    <h4>🤖 AI Analysis (Coming Soon):</h4>
+                    <div class="feature-coming-soon">
+                        <p>🔮 Fake News Detection: Not yet implemented</p>
+                        <p>📊 Bias Analysis: Not yet implemented</p>
+                        <p>✅ Fact Checking: Not yet implemented</p>
+                        <p>🖼️ Image Verification: Not yet implemented</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleFullContent() {
+            const fullContent = document.getElementById('fullContent');
+            const toggleBtn = document.getElementById('toggleBtn');
+            
+            if (fullContent.style.display === 'none') {
+                fullContent.style.display = 'block';
+                toggleBtn.textContent = 'Show Less';
+            } else {
+                fullContent.style.display = 'none';
+                toggleBtn.textContent = 'Show Full Content';
+            }
+        }
+
+        function openImage(src) {
+            window.open(src, '_blank');
+        }
+    </script>
+</body>
+</html>

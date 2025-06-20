@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TruthCheck - News Article Verifier</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 TruthCheck</h1>
+            <p>Verify news articles instantly</p>
+        </header>
+
+        <nav>
+            <a href="/" class="active">Home</a>
+            <a href="/history">History</a>
+        </nav>
+
+        <main>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.total_articles }}</div>
+                    <div class="stat-label">Articles Analyzed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.unique_sources }}</div>
+                    <div class="stat-label">News Sources</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.avg_word_count }}</div>
+                    <div class="stat-label">Avg Words</div>
+                </div>
+            </div>
+
+            <div class="scrape-form">
+                <h2>📰 Analyze a News Article</h2>
+                <form action="/scrape" method="POST" id="scrapeForm">
+                    <div class="input-group">
+                        <input type="url" name="url" id="urlInput" placeholder="Paste news article URL here..." required>
+                        <button type="submit" id="scrapeBtn">
+                            <span class="btn-text">Analyze</span>
+                            <span class="btn-loading" style="display: none;">Analyzing...</span>
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="example-urls">
+                    <p>Try these examples:</p>
+                    <button onclick="fillUrl('https://www.bbc.com/news')" class="example-btn">BBC News</button>
+                    <button onclick="fillUrl('https://www.reuters.com')" class="example-btn">Reuters</button>
+                    <button onclick="fillUrl('https://indianexpress.com')" class="example-btn">Indian Express</button>
+                </div>
+            </div>
+
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Scraping article... This may take a few seconds.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
