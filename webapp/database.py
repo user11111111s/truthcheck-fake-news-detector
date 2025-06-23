@@ -26,7 +26,11 @@ class ArticleDatabase:
                 images TEXT,
                 scraped_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 is_fake INTEGER DEFAULT NULL,
-                bias_score TEXT DEFAULT NULL
+                bias_score TEXT DEFAULT NULL,
+                credibility_score REAL DEFAULT NULL,
+                source_credibility TEXT DEFAULT NULL,
+                content_suspicion TEXT DEFAULT NULL,
+                quality_issues TEXT DEFAULT NULL
             )
         ''')
         
@@ -40,7 +44,6 @@ class ArticleDatabase:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
             
-            # Convert images list to JSON string
             images_json = json.dumps(article_data.get('images', []))
             
             cursor.execute('''
@@ -68,7 +71,57 @@ class ArticleDatabase:
         except Exception as e:
             print(f"❌ Error saving article: {e}")
             return None
-    
+
+    def save_article_with_credibility(self, article_data, credibility_report):
+        """Save article with credibility analysis"""
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            # Add new credibility columns if they do not exist
+            try:
+                cursor.execute('ALTER TABLE articles ADD COLUMN credibility_score REAL DEFAULT NULL')
+                cursor.execute('ALTER TABLE articles ADD COLUMN source_credibility TEXT DEFAULT NULL')
+                cursor.execute('ALTER TABLE articles ADD COLUMN content_suspicion TEXT DEFAULT NULL')
+                cursor.execute('ALTER TABLE articles ADD COLUMN quality_issues TEXT DEFAULT NULL')
+            except sqlite3.OperationalError:
+                # Columns already exist
+                pass
+            
+            images_json = json.dumps(article_data.get('images', []))
+            quality_issues_json = json.dumps(credibility_report['quality_analysis']['issues'])
+            
+            cursor.execute('''
+                INSERT OR REPLACE INTO articles 
+                (url, title, content, author, publication_date, source, word_count, images,
+                 credibility_score, source_credibility, content_suspicion, quality_issues)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                article_data['url'],
+                article_data['title'],
+                article_data['content'],
+                article_data['author'],
+                article_data['publication_date'],
+                article_data['source'],
+                article_data['word_count'],
+                images_json,
+                credibility_report['overall_score'],
+                credibility_report['source_credibility']['credibility'],
+                credibility_report['content_analysis']['overall_suspicion'],
+                quality_issues_json
+            ))
+            
+            article_id = cursor.lastrowid
+            conn.commit()
+            conn.close()
+            
+            print(f"✅ Article with credibility analysis saved: ID {article_id}")
+            return article_id
+            
+        except Exception as e:
+            print(f"❌ Error saving article with credibility: {e}")
+            return None
+
     def get_article(self, article_id):
         """Get a specific article by ID"""
         conn = sqlite3.connect(self.db_path)
@@ -81,7 +134,7 @@ class ArticleDatabase:
         if row:
             return self._row_to_dict(cursor, row)
         return None
-    
+
     def get_all_articles(self, limit=50):
         """Get all articles, newest first"""
         conn = sqlite3.connect(self.db_path)
@@ -97,7 +150,7 @@ class ArticleDatabase:
         conn.close()
         
         return [self._row_to_dict(cursor, row) for row in rows]
-    
+
     def search_articles(self, query):
         """Search articles by title or content"""
         conn = sqlite3.connect(self.db_path)
@@ -113,7 +166,7 @@ class ArticleDatabase:
         conn.close()
         
         return [self._row_to_dict(cursor, row) for row in rows]
-    
+
     def get_stats(self):
         """Get database statistics"""
         conn = sqlite3.connect(self.db_path)
@@ -135,7 +188,7 @@ class ArticleDatabase:
             'unique_sources': unique_sources,
             'avg_word_count': round(avg_word_count, 2)
         }
-    
+
     def _row_to_dict(self, cursor, row):
         """Convert database row to dictionary"""
         columns = [description[0] for description in cursor.description]
@@ -149,7 +202,16 @@ class ArticleDatabase:
                 article_dict['images'] = []
         else:
             article_dict['images'] = []
-            
+        
+        # Parse quality_issues back to list if present
+        if article_dict.get('quality_issues'):
+            try:
+                article_dict['quality_issues'] = json.loads(article_dict['quality_issues'])
+            except:
+                article_dict['quality_issues'] = []
+        else:
+            article_dict['quality_issues'] = []
+        
         return article_dict
 
 # Test the database
@@ -157,5 +219,3 @@ if __name__ == "__main__":
     db = ArticleDatabase()
     stats = db.get_stats()
     print("Database Stats:", stats)
-
-# // test comment

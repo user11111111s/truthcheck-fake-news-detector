@@ -409,3 +409,121 @@ nav a:hover, nav a.active {
         flex-direction: column;
     }
 }
+.credibility-analysis {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    padding: 30px;
+    border-radius: 15px;
+    margin-top: 30px;
+}
+
+.credibility-score {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.score-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.score-number {
+    font-size: 24px;
+}
+
+.score-label {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.score-details h5 {
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.analysis-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.analysis-section {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.analysis-section h6 {
+    margin-bottom: 15px;
+    color: #667eea;
+    font-size: 1.1rem;
+}
+
+.analysis-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 5px 0;
+}
+
+.analysis-label {
+    font-weight: bold;
+    color: #666;
+}
+
+.analysis-value {
+    color: #333;
+}
+
+.analysis-reason {
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+    margin-top: 10px;
+}
+
+.warning-indicators, .quality-issues {
+    margin-top: 15px;
+    padding: 15px;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+}
+
+.warning-indicators strong, .quality-issues strong {
+    color: #856404;
+}
+
+.warning-indicators ul, .quality-issues ul {
+    margin-top: 10px;
+    margin-left: 20px;
+}
+
+.warning-indicators li, .quality-issues li {
+    margin-bottom: 5px;
+    color: #856404;
+}
+
+@media (max-width: 768px) {
+    .credibility-score {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .analysis-breakdown {
+        grid-template-columns: 1fr;
+    }
+}

@@ -66,15 +66,75 @@
                 </div>
                 {% endif %}
 
-                <div class="analysis-placeholder">
-                    <h4>🤖 AI Analysis (Coming Soon):</h4>
-                    <div class="feature-coming-soon">
-                        <p>🔮 Fake News Detection: Not yet implemented</p>
-                        <p>📊 Bias Analysis: Not yet implemented</p>
-                        <p>✅ Fact Checking: Not yet implemented</p>
-                        <p>🖼️ Image Verification: Not yet implemented</p>
-                    </div>
-                </div>
+                <<div class="credibility-analysis">
+    <h4>🎯 Credibility Analysis</h4>
+    
+    <div class="credibility-score">
+        <div class="score-circle" style="background: {{ article.credibility_report.recommendation.color }}">
+            <span class="score-number">{{ article.credibility_report.overall_score }}</span>
+            <span class="score-label">/ 100</span>
+        </div>
+        <div class="score-details">
+            <h5 style="color: {{ article.credibility_report.recommendation.color }}">
+                {{ article.credibility_report.recommendation.level }}
+            </h5>
+            <p>{{ article.credibility_report.recommendation.message }}</p>
+        </div>
+    </div>
+    
+    <div class="analysis-breakdown">
+        <div class="analysis-section">
+            <h6>📰 Source Analysis</h6>
+            <div class="analysis-item">
+                <span class="analysis-label">Credibility:</span>
+                <span class="analysis-value">{{ article.credibility_report.source_credibility.credibility }}</span>
+            </div>
+            <div class="analysis-reason">
+                {{ article.credibility_report.source_credibility.reason }}
+            </div>
+        </div>
+        
+        <div class="analysis-section">
+            <h6>📝 Content Analysis</h6>
+            <div class="analysis-item">
+                <span class="analysis-label">Suspicion Level:</span>
+                <span class="analysis-value">{{ article.credibility_report.content_analysis.overall_suspicion }}</span>
+            </div>
+            <div class="analysis-item">
+                <span class="analysis-label">Clickbait Score:</span>
+                <span class="analysis-value">{{ article.credibility_report.content_analysis.clickbait_score }}%</span>
+            </div>
+            {% if article.credibility_report.content_analysis.fake_indicators %}
+            <div class="warning-indicators">
+                <strong>⚠️ Suspicious phrases found:</strong>
+                <ul>
+                    {% for indicator in article.credibility_report.content_analysis.fake_indicators %}
+                    <li>"{{ indicator }}"</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="analysis-section">
+            <h6>⭐ Quality Analysis</h6>
+            <div class="analysis-item">
+                <span class="analysis-label">Quality Score:</span>
+                <span class="analysis-value">{{ article.credibility_report.quality_analysis.quality_score }}%</span>
+            </div>
+            {% if article.credibility_report.quality_analysis.issues %}
+            <div class="quality-issues">
+                <strong>Issues found:</strong>
+                <ul>
+                    {% for issue in article.credibility_report.quality_analysis.issues %}
+                    <li>{{ issue }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
             </div>
         </main>
     </div>

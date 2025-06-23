@@ -1,3 +1,4 @@
+from credibility_checker import CredibilityChecker
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 import sys
 import os
@@ -17,10 +18,12 @@ def index():
     """Home page with URL input form"""
     stats = db.get_stats()
     return render_template('index.html', stats=stats)
+# Add this after creating the scraper and db instances
+credibility_checker = CredibilityChecker()
 
 @app.route('/scrape', methods=['POST'])
 def scrape_article():
-    """Scrape article from submitted URL"""
+    """Scrape article from submitted URL with credibility analysis"""
     try:
         url = request.form.get('url', '').strip()
         
@@ -37,15 +40,18 @@ def scrape_article():
         if not article_data:
             return jsonify({'error': 'Failed to scrape article. Please check the URL.'}), 400
         
-        # Save to database
-        article_id = db.save_article(article_data)
+        # Generate credibility report
+        credibility_report = credibility_checker.generate_credibility_report(article_data)
+        
+        # Save to database with credibility data
+        article_id = db.save_article_with_credibility(article_data, credibility_report)
         article_data['id'] = article_id
+        article_data['credibility_report'] = credibility_report
         
         return render_template('results.html', article=article_data)
         
     except Exception as e:
         return jsonify({'error': f'An error occurred: {str(e)}'}), 500
-
 @app.route('/history')
 def history():
     """Show all scraped articles"""
