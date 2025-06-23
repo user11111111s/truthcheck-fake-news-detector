@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for
 import sys
 import os
 
-# Add the scraper directory to Python path
+# Add the scraper directory to Python path...
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'scraper'))
 
 from news_scraper import NewsArticleScraper

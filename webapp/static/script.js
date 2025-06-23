@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         btnLoading.style.display = 'none';
     }
 
-    // Auto-hide loading after 30 seconds (fallback)
+    // Auto-hide loading Atfer fter 30 seconds (fallback)
     setTimeout(hideLoading, 30000);
 });
 

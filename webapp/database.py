@@ -157,3 +157,5 @@ if __name__ == "__main__":
     db = ArticleDatabase()
     stats = db.get_stats()
     print("Database Stats:", stats)
+
+# // test comment
